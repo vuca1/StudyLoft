@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django import forms
+from django.db import IntegrityError
+
+from .models import User
 
 # Create your views here.
 def index(request):
@@ -9,7 +12,33 @@ def index(request):
 
 
 def register(request):
-    pass
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+
+        # password matches confirmation
+        password = request.POST["password"]
+        confirmation = request.POST["confirmation"]
+        if password != confirmation:
+            return render(request, "academics/register.html", {
+                "message": "Passwords must match."
+            })
+
+        # try to create new user
+        try:
+            user = User.objects.create_user(username, email, password)
+            user.save()
+        except IntegrityError:
+            return render(request, "academics/register.html",{
+                "message": "Username already taken."
+            })
+
+        login(request, user)
+        return render(request, "academics/index.html", {
+            "message": "Successfully registered."
+        })
+    else:
+        return render(request, "academics/register.html")
 
 
 def login(request):
@@ -34,5 +63,6 @@ def login(request):
         return render(request, "academics/login.html")
 
 
-def logout():
-    pass
+def logout(request):
+    logout(request)
+    return redirect("login")
