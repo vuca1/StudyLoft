@@ -8,10 +8,13 @@ from .models import User
 
 # Create your views here.
 def index(request):
-    pass
+    if request.user.is_authenticated:
+        return render(request, "academics/index.html")
+    else:
+        return redirect("login_view")
 
 
-def register(request):
+def register_view(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
@@ -41,7 +44,7 @@ def register(request):
         return render(request, "academics/register.html")
 
 
-def login(request):
+def login_view(request):
     if request.method == "POST":
 
         username = request.POST["username"]
@@ -63,6 +66,6 @@ def login(request):
         return render(request, "academics/login.html")
 
 
-def logout(request):
+def logout_view(request):
     logout(request)
-    return redirect("login")
+    return redirect("login_view")
