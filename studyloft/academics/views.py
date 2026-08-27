@@ -11,7 +11,9 @@ def index(request):
     if request.user.is_authenticated:
         return render(request, "academics/index.html")
     else:
-        return redirect("login_view")
+        return render(request, "academics/login.html", {
+            "message": "You need to login first."
+        })
 
 
 def register_view(request):
