@@ -35,7 +35,7 @@ def register_view(request):
             user.save()
         except IntegrityError:
             return render(request, "academics/register.html",{
-                "message": "Username already taken."
+                "message": "Username or email already taken."
             })
 
         login(request, user)
