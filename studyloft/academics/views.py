@@ -6,7 +6,68 @@ from django.db import IntegrityError
 
 from .models import User
 
-# Create your views here.
+
+class NewNoteForm(forms.Form):
+    content = forms.CharField(
+        label="Content",
+        required=True,
+        max_length=1000,
+        widget=forms.Textarea(attrs={
+            "rows": 5
+        })
+    )
+
+
+class NewTaskForm(forms.Form):
+    title = forms.CharField(
+        label="Title",
+        required=True,
+        max_length=50
+        )
+    description = forms.CharField(
+        label="Description",
+        required=False,
+        max_length=500,
+        widget=forms.Textarea(attrs={
+            "rows": 5
+        })
+    )
+    deadline = forms.DateTimeField(
+        label="Deadline",
+        required=False
+    )
+    assignee = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=True,
+        empty_label="-Select Assignee-"
+    )
+
+
+    class NewProjectForm(forms.Form):
+        title = forms.CharField(
+            label="Title",
+            required=True,
+            max_length=50
+        )
+        description = forms.CharField(
+            label="Description",
+            required=False,
+            max_length=500,
+            widget=forms.Textarea(attrs={
+                "rows": 5
+            })
+        )
+        members = forms.ModelChoiceField(
+            queryset=User.objects.all(),
+            #queryset=User.objects.exclude(id=user.id) # for all users except current user
+            required=True,
+            empty_label="-Select Members-"
+        )
+
+
+    # TODO: forms for Project and Thesis
+
+
 def index(request):
     if request.user.is_authenticated:
         return render(request, "academics/index.html")
