@@ -2,6 +2,27 @@
 
 {% block body %}
 
-    <p>Register desu :|</p>
-    
+    <div class="container mt-5">    
+        <form action="{% url 'register_view' %}">
+            <div class="form-group m-2">
+                <label for="inputEmail">Email address</label>
+                <input type="email" name="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">
+            </div>
+            <div class="form-group m-2">
+                <label for="usernameInput">Username</label>
+                <input type="text" name="username" class="form-control" id="usernameInput">
+            </div>
+            <div class="form-group m-2">
+                <label for="passwordInput">Password</label>
+                <input type="password" name="password" class="form-control" id="passwordInput">
+            </div>
+            <div class="form-group m-2">
+                <label for="confirmationInput">Confirm password</label>
+                <input type="password" name="confirmation" class="form-control" id="confirmationInput">
+            </div>
+            <button type="submit" class="btn btn-outline-success m-2">Register</button>
+            <small>Already have an account? <a href="{% url 'login_view' %}">Log-in here.</a></small>
+        </form>
+    </div>
+
 {% endblock %}
