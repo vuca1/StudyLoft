@@ -1,0 +1,20 @@
+{% extends "academics/layout.html" %}
+
+{% block title %} - Projects{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="display-6 m-2">Add new project <a class="btn btn-outline-success" href="{% url 'add_project' %}">here</a></div>
+        <hr>
+        <div class="display-6 m-2">Your projects</div>
+        <div class="m-1">
+            {% for project in projects %}
+                {{ project.title }}
+            {% empty %}
+                No projects yet :|
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

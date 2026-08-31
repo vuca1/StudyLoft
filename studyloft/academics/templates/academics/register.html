@@ -3,7 +3,8 @@
 {% block body %}
 
     <div class="container mt-5">    
-        <form action="{% url 'register_view' %}">
+        <form action="{% url 'register_view' %}" method="post">
+            {% csrf_token %}
             <div class="form-group m-2">
                 <label for="inputEmail">Email address</label>
                 <input type="email" name="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.db import IntegrityError
 
-from .models import User
+from .models import User, Subject, Grade, Teacher, Thesis, Project, Task, Note
 
 
 class NewNoteForm(forms.Form):
@@ -43,29 +43,44 @@ class NewTaskForm(forms.Form):
     )
 
 
-    class NewProjectForm(forms.Form):
-        title = forms.CharField(
-            label="Title",
-            required=True,
-            max_length=50
-        )
-        description = forms.CharField(
-            label="Description",
-            required=False,
-            max_length=500,
-            widget=forms.Textarea(attrs={
-                "rows": 5
-            })
-        )
-        members = forms.ModelChoiceField(
-            queryset=User.objects.all(),
-            #queryset=User.objects.exclude(id=user.id) # for all users except current user
-            required=True,
-            empty_label="-Select Members-"
-        )
+class NewProjectForm(forms.Form):
+    title = forms.CharField(
+        label="Title",
+        required=True,
+        max_length=50
+    )
+    description = forms.CharField(
+        label="Description",
+        required=False,
+        max_length=500,
+        widget=forms.Textarea(attrs={
+            "rows": 5
+        })
+    )
+    members = forms.ModelMultipleChoiceField(
+        label="Members",
+        queryset=User.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
 
 
-    # TODO: forms for Project and Thesis
+class NewThesisForm(forms.Form):
+    title = forms.CharField(
+        label="Title",
+        required=True,
+        max_length=150
+    )
+    description = forms.CharField(
+        label="Description",
+        required=False,
+        max_length=500
+    )
+    sepervisor = forms.ModelChoiceField(
+        queryset=Teacher.objects.all(),
+        required=True,
+        empty_label="-Select Supervisor-"
+    )
 
 
 def index(request):
@@ -74,6 +89,50 @@ def index(request):
     else:
         return render(request, "academics/login.html", {
             "message": "You need to login first."
+        })
+
+
+@login_required
+def projects_list(request):
+    # TODO: styling of list of projects (HTML/CSS)
+    return render(request, "academics/projects_list.html", {
+        "projects": request.user.contributing_projects.all(),
+    })
+
+
+@login_required
+def add_project(request):
+    if request.method == "POST":
+        new_project_form = NewProjectForm(request.POST)
+        if new_project_form.is_valid():
+            title = new_project_form.cleaned_data["title"]
+            description = new_project_form.cleaned_data["description"]
+        else:
+            # redirect to index for now
+            return render(request, "academics/add_project.html", {
+                "message": "Invalid inputs.",
+                "new_project_form": new_project_form
+            })
+
+        new_project = Project(
+            title=title,
+            description=description
+        )
+        new_project.save()
+        new_project.members.add(request.user)
+        new_project.members.add(*new_project_form.cleaned_data["members"])
+        new_project.save()
+
+        # redirect to index for now
+        return render(request, "academics/projects_list.html", {
+            "message": f"Successfully added project {title}."
+        })
+
+    else:
+        new_project_form = NewProjectForm()
+        new_project_form.fields["members"].queryset = User.objects.exclude(id=request.user.id)
+        return render(request, "academics/add_project.html", {
+            "new_project_form": new_project_form
         })
 
 

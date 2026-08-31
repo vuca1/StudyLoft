@@ -3,7 +3,8 @@
 {% block body %}
 
     <div class="container mt-5">
-        <form action="{% url 'login_view' %}">
+        <form action="{% url 'login_view' %}" method="post">
+            {% csrf_token %}
             <div class="form-group m-2">
                 <label for="usernameInput">Username</label>
                 <input type="text" name="username" class="form-control" id="usernameInput">
