@@ -1,0 +1,43 @@
+{% extends "academics/layout.html" %}
+
+
+{% load static %}
+
+
+{% block title %} - {{ project.title }}{% endblock %}
+
+
+{% block body %}
+
+    <div class="container">
+
+        <div class="row justify-content-around mt-4">
+            <div class="col-8">
+                <div class="display-6">{{ project.title }}</div>
+                <div>{{ project.description  }}</div>
+                <small>{{ project.timestamp.date }}</small>
+            </div>
+            <div class="col-2">
+                <div><b>Members</b></div>
+                {% for member in project.members.all %}
+                    {% if project in member.created_projects.all %}
+                        {{ member.username }} <small>- author</small>
+                    {% else %}    
+                        {{ member.username }}
+                    {% endif %}
+                {% empty %}
+                    No members
+                {% endfor %}
+            </div>
+        </div>
+
+        <hr class="mt-4 mb-4">
+
+        {% for note in notes %}
+            {% include "academics/note.html" with note=note %}
+        {% empty %}
+            <small>No notes within this project.</small>
+        {% endfor %}
+    </div>
+
+{% endblock %}

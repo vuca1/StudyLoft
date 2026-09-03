@@ -1,18 +1,22 @@
 {% extends "academics/layout.html" %}
 
+{% load static %}
+
 {% block title %} - Projects{% endblock %}
 
 {% block body %}
 
     <div class="container">
         <div class="display-6 m-2">Add new project <a class="btn btn-outline-success" href="{% url 'add_project' %}">here</a></div>
-        <hr>
+        
+        <hr class="mt-4 mb-4">
+
         <div class="display-6 m-2">Your projects</div>
-        <div class="m-1">
+        <div>
             {% for project in projects %}
-                {{ project.title }}
+                {% include "academics/includes/card.html" with job=project url_name="project" %}
             {% empty %}
-                No projects yet :|
+                <small>No projects yet.</small>
             {% endfor %}
         </div>
     </div>

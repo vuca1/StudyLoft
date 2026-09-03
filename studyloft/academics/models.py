@@ -59,10 +59,17 @@ class Thesis(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=50, blank=False)
     description = models.CharField(max_length=500, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(
         "User",
         blank=False,
         related_name="contributing_projects"
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="created_projects"
     )
 
 
@@ -70,6 +77,7 @@ class Task(models.Model):
     title = models.CharField(max_length=50, blank=False)
     description = models.CharField(max_length=500, blank=True)
     deadline = models.DateTimeField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     assignee = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,

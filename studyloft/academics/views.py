@@ -125,7 +125,8 @@ def add_project(request):
 
         # redirect to index for now
         return render(request, "academics/projects_list.html", {
-            "message": f"Successfully added project {title}."
+            "message": f"Successfully added project {title}.",
+            "projects": request.user.contributing_projects.all()
         })
 
     else:
@@ -134,6 +135,12 @@ def add_project(request):
         return render(request, "academics/add_project.html", {
             "new_project_form": new_project_form
         })
+
+
+def project(request, project_id):
+    return render(request, "academics/project.html", {
+        "project": get_object_or_404(Project, id=project_id)
+    })
 
 
 def register_view(request):

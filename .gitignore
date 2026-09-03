@@ -13,3 +13,9 @@ studyloft/studyloft/__pycache__/urls.cpython-313.pyc
 studyloft/studyloft/__pycache__/wsgi.cpython-313.pyc
 studyloft/academics/migrations/0002_subject_teacher_project_grade_task_subject_teachers_and_more.py
 studyloft/academics/migrations/__pycache__/0002_subject_teacher_project_grade_task_subject_teachers_and_more.cpython-313.pyc
+studyloft/academics/migrations/0003_project_timestamp.py
+studyloft/academics/migrations/0004_task_timestamp.py
+studyloft/academics/migrations/0005_project_author.py
+studyloft/academics/migrations/__pycache__/0003_project_timestamp.cpython-313.pyc
+studyloft/academics/migrations/__pycache__/0004_task_timestamp.cpython-313.pyc
+studyloft/academics/migrations/__pycache__/0005_project_author.cpython-313.pyc
