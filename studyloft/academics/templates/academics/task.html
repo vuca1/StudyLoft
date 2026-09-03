@@ -1,0 +1,32 @@
+{% extends "academics/layout.html" %}
+
+
+{% load static %}
+
+
+{% block title %} - {{ task.title }}{% endblock %}
+
+
+{% block body %}
+
+    <div class="container">
+
+        <div class="row justify-content-around mt-4">
+            <div class="col-10">
+                <div class="display-6">{{ task.title }}</div>
+                <div>{{ task.description  }}</div>
+                <small>Due {{ task.timestamp }}</small>
+            </div>
+
+        </div>
+
+        <hr class="mt-4 mb-4">
+
+        {% for note in notes %}
+            {% include "academics/note.html" with note=note %}
+        {% empty %}
+            <small>No notes within this task.</small>
+        {% endfor %}
+    </div>
+
+{% endblock %}

@@ -34,7 +34,10 @@ class NewTaskForm(forms.Form):
     )
     deadline = forms.DateTimeField(
         label="Deadline",
-        required=False
+        required=False,
+        widget=forms.DateTimeInput(
+            attrs={"type": "datetime-local"}
+        )
     )
     assignee = forms.ModelChoiceField(
         queryset=User.objects.all(),
@@ -94,9 +97,14 @@ def index(request):
 
 @login_required
 def projects_list(request):
-    # TODO: styling of list of projects (HTML/CSS)
     return render(request, "academics/projects_list.html", {
         "projects": request.user.contributing_projects.all(),
+    })
+
+@login_required
+def tasks_list(request):
+    return render(request, "academics/tasks_list.html", {
+        "tasks": request.user.assigned_tasks.all()
     })
 
 
@@ -108,7 +116,6 @@ def add_project(request):
             title = new_project_form.cleaned_data["title"]
             description = new_project_form.cleaned_data["description"]
         else:
-            # redirect to index for now
             return render(request, "academics/add_project.html", {
                 "message": "Invalid inputs.",
                 "new_project_form": new_project_form
@@ -123,9 +130,8 @@ def add_project(request):
         new_project.members.add(*new_project_form.cleaned_data["members"])
         new_project.save()
 
-        # redirect to index for now
         return render(request, "academics/projects_list.html", {
-            "message": f"Successfully added project {title}.",
+            "message": f"Successfully added project \"{title}\".",
             "projects": request.user.contributing_projects.all()
         })
 
@@ -137,9 +143,54 @@ def add_project(request):
         })
 
 
+@login_required
+def add_task(request):
+    if request.method == "POST":
+        new_task_form = NewTaskForm(request.POST)
+        if new_task_form.is_valid():
+            title = new_task_form.cleaned_data["title"]
+            description = new_task_form.cleaned_data["description"]
+            deadline = new_task_form.cleaned_data["deadline"]
+            assignee = new_task_form.cleaned_data["assignee"]
+        else:
+            return render(request, "academics/add_task.html", {
+                "message": "Invalid inputs",
+                "new_task_form": new_task_form
+            })
+
+        new_task = Task(
+            title=title,
+            description=description,
+            deadline=deadline,
+            assignee=assignee,
+            author=request.user,
+        )
+        new_task.save()
+
+        return render(request, "academics/tasks_list.html", {
+            "message": f"Successfully added task \"{title}\".",
+            "tasks": request.user.assigned_tasks.all()
+        })
+
+    else:
+        return render(request, "academics/add_task.html", {
+            "new_task_form": NewTaskForm()
+        })
+
+@login_required
 def project(request, project_id):
+    # TODO: check if user in members
+    # TODO: add back to list button
     return render(request, "academics/project.html", {
         "project": get_object_or_404(Project, id=project_id)
+    })
+
+@login_required
+def task(request, task_id):
+    # TODO: check if user author or assignee
+    # TODO: add back to list button
+    return render(request, "academics/task.html", {
+        "task": get_object_or_404(Task, id=task_id)
     })
 
 

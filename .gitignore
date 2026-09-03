@@ -19,3 +19,5 @@ studyloft/academics/migrations/0005_project_author.py
 studyloft/academics/migrations/__pycache__/0003_project_timestamp.cpython-313.pyc
 studyloft/academics/migrations/__pycache__/0004_task_timestamp.cpython-313.pyc
 studyloft/academics/migrations/__pycache__/0005_project_author.cpython-313.pyc
+studyloft/academics/migrations/0006_task_author_task_project.py
+studyloft/academics/migrations/__pycache__/0006_task_author_task_project.cpython-313.pyc

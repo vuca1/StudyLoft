@@ -1,0 +1,24 @@
+{% extends "academics/layout.html" %}
+
+{% load static %}
+
+{% block title %} - Tasks{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="display-6 mb-2 mt-4">Add new task <a class="btn btn-outline-success" href="{% url 'add_task' %}">here</a></div>
+        
+        <hr class="mt-4 mb-4">
+
+        <div class="display-6 m-2">Your tasks</div>
+        <div>
+            {% for task in tasks %}
+                {% include "academics/includes/card.html" with job=task url_name="task" %}
+            {% empty %}
+                <small>No tasks yet.</small>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

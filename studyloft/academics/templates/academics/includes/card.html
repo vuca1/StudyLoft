@@ -1,6 +1,9 @@
 <div class="card m-3">
     <div class="card-body">
         <p class="display-6">{{ job.title }}</p>
-        <a class="btn btn-outline-success" href="{% url url_name job.id %}">View</a>
+        {% if url_name == "task" %}
+            <small>Deadline {{ job.deadline.date }}</small><br>
+        {% endif %}
+        <a class="btn btn-outline-success mt-2" href="{% url url_name job.id %}">View</a>
     </div>
 </div>

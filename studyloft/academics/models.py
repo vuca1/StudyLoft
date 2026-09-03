@@ -84,6 +84,19 @@ class Task(models.Model):
         null=True,
         related_name="assigned_tasks"
     )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="created_tasks"
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="related_tasks"
+    )
 
 
 class Note(models.Model):
