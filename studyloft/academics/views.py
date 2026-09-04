@@ -209,6 +209,44 @@ def task(request, task_id):
     })
 
 
+@login_required
+def remove_project(request, project_id):
+    project = get_object_or_404(
+        Project,
+        id=project_id,
+        author=request.user
+    )
+
+    project_title = project.title
+
+    # remove project from db
+    project.delete()
+    return render(request, "academics/projects_list.html", {
+        "message": f"Project \"{project_title}\" successfully removed.",
+        "projects": request.user.contributing_projects.all().order_by("-timestamp")
+        
+    })
+
+
+@login_required
+def remove_task(request, task_id):
+    task = get_object_or_404(
+            Task,
+            id=task_id,
+            author=request.user
+        )
+    
+    task_title = task.title
+
+    # remove task from db
+    task.delete()
+    return render(request, "academics/projects_list.html", {
+        "message": f"Project \"{task_title}\" successfully removed.",
+        "tasks": request.user.assigned_tasks.all().order_by("deadline"),
+        "created_tasks": request.user.created_tasks.all().order_by("deadline")
+    })
+
+
 def register_view(request):
     if request.method == "POST":
         username = request.POST["username"]
