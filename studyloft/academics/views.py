@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.db import IntegrityError
+from django.db.models import Q
 
 from .models import User, Subject, Grade, Teacher, Thesis, Project, Task, Note
 
@@ -98,13 +99,14 @@ def index(request):
 @login_required
 def projects_list(request):
     return render(request, "academics/projects_list.html", {
-        "projects": request.user.contributing_projects.all(),
+        "projects": request.user.contributing_projects.all().order_by("-timestamp"),
     })
 
 @login_required
 def tasks_list(request):
     return render(request, "academics/tasks_list.html", {
-        "tasks": request.user.assigned_tasks.all()
+        "tasks": request.user.assigned_tasks.all().order_by("deadline"),
+        "created_tasks": request.user.created_tasks.all().order_by("deadline")
     })
 
 
@@ -123,7 +125,8 @@ def add_project(request):
 
         new_project = Project(
             title=title,
-            description=description
+            description=description,
+            author=request.user
         )
         new_project.save()
         new_project.members.add(request.user)
@@ -177,18 +180,32 @@ def add_task(request):
             "new_task_form": NewTaskForm()
         })
 
+
 @login_required
 def project(request, project_id):
-    # TODO: check if user in members
+    project = get_object_or_404(
+        Project,
+        id=project_id,
+        members=request.user
+    )
+
     return render(request, "academics/project.html", {
-        "project": get_object_or_404(Project, id=project_id)
+        "project": project
     })
+
 
 @login_required
 def task(request, task_id):
-    # TODO: check if user author or assignee
+    task = get_object_or_404(
+        Task,
+        Q(id=task_id) & (
+            Q(assignee=request.user) |
+            Q(author=request.user)
+        )
+    )
+
     return render(request, "academics/task.html", {
-        "task": get_object_or_404(Task, id=task_id)
+        "task": task
     })
 
 
@@ -232,9 +249,7 @@ def login_view(request):
         # check if authenticate successful
         if user is not None:
             login(request, user)
-            return render(request, "academics/index.html", {
-                "message": "Login successful."
-            })
+            return redirect("index")
         else:
             return render(request, "academics/login.html", {
                 "message": "Invalid username and/or password."

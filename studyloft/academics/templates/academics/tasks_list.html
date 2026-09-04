@@ -16,7 +16,18 @@
             {% for task in tasks %}
                 {% include "academics/includes/card.html" with job=task url_name="task" %}
             {% empty %}
-                <small>No tasks yet.</small>
+                <small>No tasks. Take a break.</small>
+            {% endfor %}
+        </div>
+
+        <hr class="mt-4 mb-4">
+
+        <div class="display-6 m-2">Created tasks</div>
+        <div>
+            {% for task in created_tasks %}
+                {% include "academics/includes/card.html" with job=task url_name="task" %}
+            {% empty %}
+                <small>You didn't create any tasks yet.</small>
             {% endfor %}
         </div>
     </div>

@@ -14,10 +14,10 @@
         <div class="row justify-content-around mt-4">
             <div class="display-6">{{ task.title }}</div>
             <div>{{ task.description  }}</div>
-            <small>Due {{ task.timestamp }}</small>
+            <small class="mt-4">Due {{ task.timestamp }}</small>
         </div>
 
-        <div class="row justify-content-around mt-4">
+        <div class="row justify-content-around mt-2">
             <a class="btn btn-outline-success" href="{% url 'tasks_list' %}">Back to tasks</a>
         </div>
 
