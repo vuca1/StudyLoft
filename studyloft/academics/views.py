@@ -240,8 +240,8 @@ def remove_task(request, task_id):
 
     # remove task from db
     task.delete()
-    return render(request, "academics/projects_list.html", {
-        "message": f"Project \"{task_title}\" successfully removed.",
+    return render(request, "academics/tasks_list.html", {
+        "message": f"Task \"{task_title}\" successfully removed.",
         "tasks": request.user.assigned_tasks.all().order_by("deadline"),
         "created_tasks": request.user.created_tasks.all().order_by("deadline")
     })

@@ -20,7 +20,7 @@
         <div class="row justify-content-around mt-2">
             {% if task in request.user.created_tasks.all %}
                 <a class="col-5 btn btn-outline-success" href="{% url 'tasks_list' %}">Back to tasks</a>
-                <a class="col-5 btn btn-outline-danger" href="#">Remove task</a>
+                <a class="col-5 btn btn-outline-danger" href="{% url 'remove_task' task.id %}">Remove task</a>
             {% else %}
                 <a class="btn btn-outline-success" href="{% url 'tasks_list' %}">Back to tasks</a>
             {% endif %}
