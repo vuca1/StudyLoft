@@ -180,7 +180,6 @@ def add_task(request):
 @login_required
 def project(request, project_id):
     # TODO: check if user in members
-    # TODO: add back to list button
     return render(request, "academics/project.html", {
         "project": get_object_or_404(Project, id=project_id)
     })
@@ -188,7 +187,6 @@ def project(request, project_id):
 @login_required
 def task(request, task_id):
     # TODO: check if user author or assignee
-    # TODO: add back to list button
     return render(request, "academics/task.html", {
         "task": get_object_or_404(Task, id=task_id)
     })

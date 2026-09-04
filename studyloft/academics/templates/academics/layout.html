@@ -29,7 +29,7 @@
                             <a class="nav-link" href="#">Thesis (plural?)</a>
                             <a class="nav-link" href="#">My Profile</a>
                             <a class="nav-link" href="#">My Subjects</a>
-                            <a class="nav-link" href="{% url 'logout_view' %}">Log-out</a>
+                            <a class="nav-link text-danger" href="{% url 'logout_view' %}">Log-out</a>
                         {% else %}
                             <a class="nav-link" href="{% url 'login_view' %}">Log-in</a>
                             <a class="nav-link" href="{% url 'register_view' %}">Register</a>
