@@ -88,8 +88,12 @@ class NewThesisForm(forms.Form):
 
 
 def index(request):
+    # TODO: main page layout with practical information (limit 3? important tasks/projects)
     if request.user.is_authenticated:
-        return render(request, "academics/index.html")
+        return render(request, "academics/index.html", {
+            "projects": request.user.contributing_projects.all().order_by("timestamp")[:3],
+            "tasks": request.user.assigned_tasks.all().order_by("-deadline")[:3]
+        })
     else:
         return render(request, "academics/login.html", {
             "message": "You need to login first."

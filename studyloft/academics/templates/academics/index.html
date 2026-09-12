@@ -3,5 +3,30 @@
 {% load static %}
 
 {% block body %}
-    Hey {{ request.user.username }}! This is your dashboard :D
+
+    <div class="display-4 m-5">Welcome to your dashboard, {{request.user.username }}</div>
+
+    <hr>
+
+    <div class="container mb-4 mt-5">
+        <div class="display-5 m-2"><b>Recent projects</b></div>
+        {% for project in projects %}
+            {% include "academics/includes/card.html" with job=project url_name="project" %}
+        {% empty %}
+            No projects yet.
+        {% endfor %}
+        <div class="display-6 mb-4"><a class="btn btn-outline-success ms-3" href="{% url 'projects_list' %}">Go to all projects</a></div>
+
+        <hr>
+
+        <div class="display-5 m-2"><b>Due tasks</b></div>
+        {% for task in tasks %}
+            {% include "academics/includes/card.html" with job=task url_name="task" %}
+        {% empty %}
+            No tasks yet.
+        {% endfor %}
+        <div class="display-6 mb-2"><a class="btn btn-outline-success ms-3" href="{% url 'tasks_list' %}">Go to all tasks</a></div>
+    
+    </div>
+
 {% endblock %}
