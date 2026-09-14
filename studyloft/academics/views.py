@@ -4,6 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.db import IntegrityError
 from django.db.models import Q
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+
+
+import json
+
 
 from .models import User, Subject, Grade, Teacher, Thesis, Project, Task, Note
 
@@ -14,7 +20,7 @@ class NewNoteForm(forms.Form):
         required=True,
         max_length=1000,
         widget=forms.Textarea(attrs={
-            "rows": 5
+            "rows": 2
         })
     )
 
@@ -87,8 +93,72 @@ class NewThesisForm(forms.Form):
     )
 
 
+# TODO: fix when reloading page after adding task
+# (probably even project) it adds the job everytime you reload right after
+
+# TODO: add remove note
+
+
+@login_required
+def add_note(request, job_id):
+    if request.method == "POST":
+        content = request.POST["content"]
+        job_type = request.POST["job-type"]
+
+        # check if content empty
+        if content == "":
+            return JsonResponse({
+                "success": False,
+                "content": content
+            })
+
+        # get desired object
+        match job_type:
+            case "project":
+                job = get_object_or_404(Project, id=job_id)
+            case "task":
+                job = get_object_or_404(Task, id=job_id)
+            case "thesis":
+                job = get_object_or_404(Thesis, id=job_id)
+
+        # check if user is allowed to add note
+        if not can_add_note(request.user, job):
+            return JsonResponse({
+                "success": False,
+                "content": content
+            })
+
+        # create new note object
+        new_note = Note(
+            content=content,
+            author=request.user
+            )
+
+        # add appropriate job type
+        match job_type:
+            case "project":
+                new_note.project=job
+            case "task":
+                new_note.task=job
+            case "thesis":
+                new_note.thesis=job
+
+        new_note.save()
+
+        # convert note to html
+        note_html = render_to_string(
+            "academics/includes/note.html",
+            {"note": new_note},
+            request=request
+        )
+
+        return JsonResponse({
+            "success": True,
+            "note_html": note_html
+        })
+
+
 def index(request):
-    # TODO: main page layout with practical information (limit 3? important tasks/projects)
     if request.user.is_authenticated:
         return render(request, "academics/index.html", {
             "projects": request.user.contributing_projects.all().order_by("timestamp")[:3],
@@ -105,6 +175,7 @@ def projects_list(request):
     return render(request, "academics/projects_list.html", {
         "projects": request.user.contributing_projects.all().order_by("-timestamp"),
     })
+
 
 @login_required
 def tasks_list(request):
@@ -194,7 +265,9 @@ def project(request, project_id):
     )
 
     return render(request, "academics/project.html", {
-        "project": project
+        "project": project,
+        "new_note_form": NewNoteForm(),
+        "notes": project.project_notes.all().order_by("-timestamp")
     })
 
 
@@ -209,7 +282,9 @@ def task(request, task_id):
     )
 
     return render(request, "academics/task.html", {
-        "task": task
+        "task": task,
+        "new_note_form": NewNoteForm(),
+        "notes": task.task_notes.all().order_by("-timestamp")
     })
 
 
@@ -304,3 +379,15 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect("login_view")
+
+
+def can_add_note(user, obj):
+    # returns True if user is allowed to add note to the job (project/task/thesis)
+    if isinstance(obj, Project):
+        return user in obj.members.all()
+
+    if isinstance(obj, Task):
+        return user == obj.assignee or user == obj.author
+
+    if isinstance(obj, Thesis):
+        return user == obj.student

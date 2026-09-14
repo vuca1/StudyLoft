@@ -28,11 +28,28 @@
 
         <hr class="mt-4 mb-4">
 
-        {% for note in notes %}
-            {% include "academics/note.html" with note=note %}
-        {% empty %}
-            <small>No notes within this task.</small>
-        {% endfor %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ new_note_form }}
+            </div>
+            <input type="hidden" name="job-type" value="task">
+            <button type="submit"
+                    class="btn btn-outline-success add-note"
+                    data-job-id="{{ task.id }}">
+                Add
+            </button>
+        </form>
+
+        <div id="notes">
+            {% for note in notes %}
+                {% include "academics/includes/note.html" with note=note %}
+            {% empty %}
+                <small>No notes within this task.</small>
+            {% endfor %}
+        </div>
     </div>
+
+    <script src="{% static 'academics/script.js' %}"></script>
 
 {% endblock %}
