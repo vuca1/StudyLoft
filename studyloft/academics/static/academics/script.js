@@ -25,10 +25,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(result => {
                 // check if edit was successful on server-side
                 if (result.success) {
+                    element.form.querySelector('[name="content"]').value = '';
                     document.querySelector('#notes').insertAdjacentHTML(
                         "beforebegin",
                         result.note_html
-                    );       
+                    );
+                    document.querySelector("#no-notes-message").remove();
                 } else {
                     element.form.querySelector('[name="content"]').value = result.content;
                 }

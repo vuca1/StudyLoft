@@ -45,7 +45,7 @@
             {% for note in notes %}
                 {% include "academics/includes/note.html" with note=note %}
             {% empty %}
-                <small>No notes within this task.</small>
+                <small id="no-notes-message">No notes within this task.</small>
             {% endfor %}
         </div>
     </div>
