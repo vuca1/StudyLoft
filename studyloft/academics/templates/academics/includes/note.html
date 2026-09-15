@@ -1,6 +1,13 @@
-<div class="card m-3">
+<div class="card m-3" id="note-{{ note.id }}">
     <div class="card-body">
         <p">{{ note.content }}</p>
         <small>{{ note.timestamp }}</small>
+        {% if note.author == request.user %}
+            <button
+                    class="btn btn-outline-danger remove-note float-end"
+                    data-note-id="{{ note.id }}">
+                Remove
+            </button>
+        {% endif %}
     </div>
 </div>

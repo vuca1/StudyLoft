@@ -90,9 +90,6 @@ class NewThesisForm(forms.Form):
     )
 
 
-# TODO: add remove note feature
-
-
 @login_required
 def add_note(request, job_id):
     if request.method == "POST":
@@ -150,6 +147,25 @@ def add_note(request, job_id):
             "success": True,
             "note_html": note_html
         })
+
+
+@login_required
+def remove_note(request, note_id):
+    if request.method == "POST":
+        note = get_object_or_404(
+            Note,
+            id=note_id,
+            author=request.user
+        )
+    
+        note.delete()
+        return JsonResponse({
+            "success": True
+        })
+    
+    return JsonResponse({
+        "success": False
+    })
 
 
 def index(request):

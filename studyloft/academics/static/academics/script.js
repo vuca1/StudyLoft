@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', event => {
 
+        console.log("entered click event")
+
         // get clicked element
         const element = event.target;   
 
@@ -29,6 +31,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     );       
                 } else {
                     element.form.querySelector('[name="content"]').value = result.content;
+                }
+            });
+        } else if (element.classList.contains('remove-note')) {
+
+            // prevent from default rerouting
+            event.preventDefault();
+
+            // find neccessary elements
+            const note_id = element.dataset.noteId;
+            const url = `/remove_note/${note_id}`
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    document.querySelector(`#note-${note_id}`).remove();
                 }
             });
         }
