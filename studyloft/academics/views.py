@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django import forms
@@ -6,10 +7,6 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
-
-
-import json
-
 
 from .models import User, Subject, Grade, Teacher, Thesis, Project, Task, Note
 
@@ -93,10 +90,7 @@ class NewThesisForm(forms.Form):
     )
 
 
-# TODO: fix when reloading page after adding task
-# (probably even project) it adds the job everytime you reload right after
-
-# TODO: add remove note
+# TODO: add remove note feature
 
 
 @login_required
@@ -208,10 +202,8 @@ def add_project(request):
         new_project.members.add(*new_project_form.cleaned_data["members"])
         new_project.save()
 
-        return render(request, "academics/projects_list.html", {
-            "message": f"Successfully added project \"{title}\".",
-            "projects": request.user.contributing_projects.all()
-        })
+        messages.success(request, f"Project {title} has been added.")
+        return redirect("projects_list")
 
     else:
         new_project_form = NewProjectForm()
@@ -245,10 +237,8 @@ def add_task(request):
         )
         new_task.save()
 
-        return render(request, "academics/tasks_list.html", {
-            "message": f"Successfully added task \"{title}\".",
-            "tasks": request.user.assigned_tasks.all()
-        })
+        messages.success(request, f"Task {title} has been added.")
+        return redirect("tasks_list")
 
     else:
         return render(request, "academics/add_task.html", {
@@ -295,16 +285,12 @@ def remove_project(request, project_id):
         id=project_id,
         author=request.user
     )
-
     project_title = project.title
 
     # remove project from db
     project.delete()
-    return render(request, "academics/projects_list.html", {
-        "message": f"Project \"{project_title}\" successfully removed.",
-        "projects": request.user.contributing_projects.all().order_by("-timestamp")
-        
-    })
+    messages.success(request, f"Project {project_title} has been removed.")
+    return redirect("projects_list")
 
 
 @login_required
@@ -314,16 +300,12 @@ def remove_task(request, task_id):
             id=task_id,
             author=request.user
         )
-    
     task_title = task.title
 
     # remove task from db
     task.delete()
-    return render(request, "academics/tasks_list.html", {
-        "message": f"Task \"{task_title}\" successfully removed.",
-        "tasks": request.user.assigned_tasks.all().order_by("deadline"),
-        "created_tasks": request.user.created_tasks.all().order_by("deadline")
-    })
+    messages.success(request, f"Task {task_title} has been removed.")
+    return redirect("tasks_list")
 
 
 def register_view(request):
