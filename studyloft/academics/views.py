@@ -80,13 +80,17 @@ class NewThesisForm(forms.Form):
     )
     description = forms.CharField(
         label="Description",
-        required=False,
+        required=True,
         max_length=500
     )
-    sepervisor = forms.ModelChoiceField(
+    supervisor = forms.ModelChoiceField(
         queryset=Teacher.objects.all(),
         required=True,
         empty_label="-Select Supervisor-"
+    )
+    degree = forms.ChoiceField(
+        choices=Thesis.DEGREE_CHOICES,
+        required=True
     )
 
 
@@ -172,7 +176,8 @@ def index(request):
     if request.user.is_authenticated:
         return render(request, "academics/index.html", {
             "projects": request.user.contributing_projects.all().order_by("timestamp")[:3],
-            "tasks": request.user.assigned_tasks.all().order_by("-deadline")[:3]
+            "tasks": request.user.assigned_tasks.all().order_by("-deadline")[:3],
+            "thesis": request.user.students_theses.all().order_by("-timestamp").first()
         })
     else:
         return render(request, "academics/login.html", {
@@ -196,6 +201,13 @@ def tasks_list(request):
 
 
 @login_required
+def theses_list(request):
+    return render(request, "academics/theses_list.html", {
+        "theses": request.user.students_theses.all().order_by("timestamp"),
+    })
+
+
+@login_required
 def add_project(request):
     if request.method == "POST":
         new_project_form = NewProjectForm(request.POST)
@@ -204,7 +216,7 @@ def add_project(request):
             description = new_project_form.cleaned_data["description"]
         else:
             return render(request, "academics/add_project.html", {
-                "message": "Invalid inputs.",
+                "message": "Invalid input(s).",
                 "new_project_form": new_project_form
             })
 
@@ -218,7 +230,7 @@ def add_project(request):
         new_project.members.add(*new_project_form.cleaned_data["members"])
         new_project.save()
 
-        messages.success(request, f"Project {title} has been added.")
+        messages.success(request, f"Project \"{title}\" has been added.")
         return redirect("projects_list")
 
     else:
@@ -240,7 +252,7 @@ def add_task(request):
             assignee = new_task_form.cleaned_data["assignee"]
         else:
             return render(request, "academics/add_task.html", {
-                "message": "Invalid inputs",
+                "message": "Invalid input(s).",
                 "new_task_form": new_task_form
             })
 
@@ -253,7 +265,7 @@ def add_task(request):
         )
         new_task.save()
 
-        messages.success(request, f"Task {title} has been added.")
+        messages.success(request, f"Task \"{title}\" has been added.")
         return redirect("tasks_list")
 
     else:
@@ -262,6 +274,39 @@ def add_task(request):
         })
 
 
+@login_required
+def add_thesis(request):    
+    if request.method == "POST":
+        new_thesis_form = NewThesisForm(request.POST)
+        if new_thesis_form.is_valid():
+            title = new_thesis_form.cleaned_data["title"]
+            description = new_thesis_form.cleaned_data["description"]
+            degree = new_thesis_form.cleaned_data["degree"]
+            supervisor = new_thesis_form.cleaned_data["supervisor"]
+        else:
+            return render(request, "academics/add_thesis.html", {
+                "message": "Invalid input(s).",
+                "new_thesis_form": new_thesis_form
+            })
+
+        new_thesis = Thesis(
+            title=title,
+            description=description,
+            degree=degree,
+            supervisor=supervisor,
+            student=request.user
+        )
+        new_thesis.save()
+
+        messages.success(request, f"Thesis \"{title}\" has been added.")
+        return redirect("theses_list")
+
+    else:
+        return render(request, "academics/add_thesis.html", {
+            "new_thesis_form": NewThesisForm()
+        })
+
+# TODO: if user not permited to acces what then? (in thesis, task and project)
 @login_required
 def project(request, project_id):
     project = get_object_or_404(
@@ -293,6 +338,21 @@ def task(request, task_id):
         "notes": task.task_notes.all().order_by("-timestamp")
     })
 
+# TODO: add note styling in /thesis/id and project and task
+@login_required
+def thesis(request, thesis_id):
+    thesis = get_object_or_404(
+        Thesis,
+        id=thesis_id,
+        student=request.user
+    )
+
+    return render(request, "academics/thesis.html", {
+        "thesis": thesis,
+        "new_note_form": NewNoteForm(),
+        "notes": thesis.thesis_notes.all().order_by("-timestamp")
+    })
+
 
 @login_required
 def remove_project(request, project_id):
@@ -305,7 +365,7 @@ def remove_project(request, project_id):
 
     # remove project from db
     project.delete()
-    messages.success(request, f"Project {project_title} has been removed.")
+    messages.success(request, f"Project \"{project_title}\" has been removed.")
     return redirect("projects_list")
 
 
@@ -320,8 +380,23 @@ def remove_task(request, task_id):
 
     # remove task from db
     task.delete()
-    messages.success(request, f"Task {task_title} has been removed.")
+    messages.success(request, f"Task \"{task_title}\" has been removed.")
     return redirect("tasks_list")
+
+
+@login_required
+def remove_thesis(request, thesis_id):
+    thesis = get_object_or_404(
+        Thesis,
+        id=thesis_id,
+        student=request.user
+    )
+    thesis_title = thesis.title
+
+    # remove thesis from db
+    thesis.delete()
+    messages.success(request, f"Thesis \"{thesis_title}\" has been removed.")
+    return redirect("theses_list")
 
 
 def register_view(request):

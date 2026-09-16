@@ -4,6 +4,9 @@
         {% if url_name == "task" %}
             <small>Deadline {{ job.deadline.date }}</small><br>
         {% endif %}
+        {% if url_name == "thesis" %}
+            <small>{{ job.degree }}</small><br>
+        {% endif %}
         <a class="btn btn-outline-success mt-2" href="{% url url_name job.id %}">View</a>
     </div>
 </div>

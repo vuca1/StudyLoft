@@ -26,7 +26,16 @@
             No tasks yet.
         {% endfor %}
         <div class="display-6 mb-2"><a class="btn btn-outline-success ms-3" href="{% url 'tasks_list' %}">Go to all tasks</a></div>
-    
+        
+        <hr>
+        
+        <div class="display-5 m-2"><b>Recent thesis</b></div>
+            {% if thesis %}
+                {% include "academics/includes/card.html" with job=thesis url_name="thesis" %}
+            {% else %}
+                No thesis yet.
+            {% endif %}
+        <div class="display-6 mb-2"><a class="btn btn-outline-success ms-3" href="{% url 'theses_list' %}">Go to all theses</a></div>
     </div>
 
 {% endblock %}

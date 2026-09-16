@@ -27,8 +27,7 @@
                             <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
                             <a class="nav-link" href="{% url 'projects_list' %}">Projects</a>
                             <a class="nav-link" href="{% url 'tasks_list' %}">Tasks</a>
-                            <a class="nav-link" href="#">Thesis (plural?)</a>
-                            <a class="nav-link" href="#">My Profile</a>
+                            <a class="nav-link" href="{% url 'theses_list' %}">Theses</a>
                             <a class="nav-link" href="#">My Subjects</a>
                             <a class="nav-link text-danger" href="{% url 'logout_view' %}">Log-out</a>
                         {% else %}

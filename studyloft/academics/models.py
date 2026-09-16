@@ -5,6 +5,9 @@ class User(AbstractUser):
     pass
 
 
+# TODO: add institutions (groups to divide students and teachers)
+
+
 class Subject(models.Model):
     title = models.CharField(max_length=200, blank=False)
     description = models.CharField(max_length=500, blank=True)
@@ -38,21 +41,37 @@ class Teacher(models.Model):
     first = models.CharField(max_length=50, blank=False)
     last = models.CharField(max_length=50, blank=False)
 
+    def __str__(self):
+        return f"{self.last} {self.first}"
+
 
 class Thesis(models.Model):
+    DEGREE_CHOICES = [
+        ("", "-Select Degree-"),
+        ("bachelor", "Bachelor's"),
+        ("master", "Master's"),
+        ("doctoral", "Doctoral")
+    ]
+
     title = models.CharField(max_length=150, blank=False)
     description = models.CharField(max_length=500, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    degree = models.CharField(
+        max_length=20,
+        choices=DEGREE_CHOICES
+    )
     supervisor = models.ForeignKey(
         Teacher,
         on_delete=models.SET_NULL,
-        related_name="supervised_thesis",
-        null=True
+        related_name="supervised_theses",
+        null=True,
+        blank=True
     )
     student = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="student_thesis"
+        related_name="students_theses"
     )
 
 

@@ -1,0 +1,60 @@
+{% extends "academics/layout.html" %}
+
+{% load static %}
+
+{% block title %} - {{ thesis.title }}{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+
+        <div class="row justify-content-around mt-4">
+            <div class="display-6">{{ thesis.title }}</div>
+            <div class="col-10">
+                <div>{{ thesis.description  }}</div>
+            </div>
+            <div class="col-2">
+                <div><b>Supervisor</b></div>
+                {{ thesis.supervisor }}
+            </div>
+            <small>Created at {{ thesis.timestamp.date }}</small>
+        </div>
+
+        <div class="row justify-content-around mt-2">
+            {% if thesis in request.user.students_theses.all %}
+                <a class="col-5 btn btn-outline-success" href="{% url 'theses_list' %}">Back to theses</a>
+                <a class="col-5 btn btn-outline-danger" href="{% url 'remove_thesis' thesis.id %}">Remove thesis</a>
+            {% else %}
+                <a class="btn btn-outline-success" href="{% url 'theses_list' %}">Back to theses</a>
+            {% endif %}
+        </div>
+
+        <hr class="mt-4 mb-4">
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="row justify-content-around mt-2">
+                <div class="form-group col-8">
+                    {{ new_note_form }}
+                </div>
+                <input type="hidden" name="job-type" value="thesis">
+                <button type="submit"
+                        class="btn btn-outline-success add-note col-2 h-25"
+                        data-job-id="{{ thesis.id }}">
+                    Add note
+                </button>
+            </div>
+        </form>
+
+        <div id="notes">
+            {% for note in notes %}
+                {% include "academics/includes/note.html" with note=note %}
+            {% empty %}
+                <small id="no-notes-message">No notes within this thesis.</small>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="{% static 'academics/script.js' %}"></script>
+
+{% endblock %}

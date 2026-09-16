@@ -1,0 +1,22 @@
+{% extends "academics/layout.html" %}
+
+{% load static %}
+
+{% block title %} - Theses{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="display-6 mb-2 mt-4">Add new thesis <a class="btn btn-outline-success" href="{% url 'add_thesis' %}">here</a></div>
+        
+        <hr class="mt-4 mb-4">
+
+        <div class="display-6 m-2">Your theses</div>
+        <div>
+            {% for thesis in theses %}
+                {% include "academics/includes/card.html" with job=thesis url_name="thesis" %}
+            {% empty %}
+                <small>No theses yet. Hurry up :D</small>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
