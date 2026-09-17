@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
-from .models import User, Subject, Grade, Teacher, Thesis, Project, Task, Note, Institution
+from .models import User, Subject, Teacher, Thesis, Project, Task, Note, Institution
 
 
 class NewNoteForm(forms.Form):
@@ -93,6 +93,37 @@ class NewThesisForm(forms.Form):
         required=True
     )
 
+
+class NewSubjectForm(forms.Form):
+    title = forms.CharField(
+        label="Title",
+        max_length=200,
+        required=True
+        )
+    description = forms.CharField(
+        label="Description",
+        max_length=500,
+        required=False
+    )
+    credits = forms.IntegerField(
+        label="Credits",
+        min_value=0,
+        required=True,
+        max_value=50
+    )
+    teacher = forms.ModelChoiceField(
+        queryset=Teacher.objects.all(),
+        required=True,
+        empty_label="-Select Teacher-"
+    )
+    grade = forms.ChoiceField(
+        choices=Subject.GRADE_CHOICES,
+        required=True
+    )
+
+# TODO: add page where user can add and remove subjects
+# TODO: when choosing teacher object (SubjectForm and ThesisForm),
+#       only show teachers within institution
 
 @login_required
 def add_note(request, job_id):
@@ -306,6 +337,22 @@ def add_thesis(request):
     else:
         return render(request, "academics/add_thesis.html", {
             "new_thesis_form": NewThesisForm()
+        })
+
+
+@login_required
+def subjects(request):
+    if request.method == "POST":
+        pass
+
+    else:
+        new_subject_form = NewSubjectForm()
+        new_subject_form.fields["teacher"].queryset = Teacher.objects.filter(
+            institution=request.user.institution
+        )
+        return render(request, "academics/subjects.html", {
+            "subjects": request.user.subjects.all(),
+            "new_subject_form": new_subject_form
         })
 
 

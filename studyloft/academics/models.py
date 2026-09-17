@@ -19,32 +19,34 @@ class User(AbstractUser):
 
 
 class Subject(models.Model):
+    GRADE_CHOICES = [
+        ("", "-Select Your Grade-"),
+        ("A", "A"),
+        ("B", "B"),
+        ("C", "C"),
+        ("D", "D"),
+        ("E", "E"),
+        ("F", "F"),
+        ("None", "No grade yet")
+    ]
+
     title = models.CharField(max_length=200, blank=False)
     description = models.CharField(max_length=500, blank=True)
     credits = models.PositiveSmallIntegerField(blank=False)
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="subjects"
+    )
+    grade = models.CharField(
+        max_length=20,
+        choices=GRADE_CHOICES
+    )
     teachers = models.ManyToManyField(
         "Teacher",
         blank=False,
         related_name="teaching_subjects"
     )
-
-
-class Grade(models.Model):
-    subject = models.ForeignKey(
-        Subject,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=False,
-        related_name="subject_grades"
-    )
-    student = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        blank=False,
-        related_name="student_grades"
-    )
-    date = models.DateField(blank=False)
-    grade = models.CharField(max_length=50, blank=False)
 
 
 class Teacher(models.Model):

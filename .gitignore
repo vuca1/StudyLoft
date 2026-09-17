@@ -31,3 +31,5 @@ studyloft/academics/migrations/0011_teacher_institution.py
 studyloft/academics/migrations/__pycache__/0009_alter_thesis_degree_alter_thesis_student_institution.cpython-313.pyc
 studyloft/academics/migrations/__pycache__/0010_remove_institution_students_user_institution.cpython-313.pyc
 studyloft/academics/migrations/__pycache__/0011_teacher_institution.cpython-313.pyc
+studyloft/academics/migrations/0012_subject_grade_subject_student_delete_grade.py
+studyloft/academics/migrations/__pycache__/0012_subject_grade_subject_student_delete_grade.cpython-313.pyc
