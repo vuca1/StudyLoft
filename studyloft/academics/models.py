@@ -1,11 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
+class Institution(models.Model):
+    title = models.CharField(max_length=100, blank=False)
+    city = models.CharField(max_length=50, blank=True)
+    country = models.CharField(max_length=50, blank=True)
+
+
 class User(AbstractUser):
-    pass
-
-
-# TODO: add institutions (groups to divide students and teachers)
+    institution = models.ForeignKey(
+        Institution,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="students"
+    )
 
 
 class Subject(models.Model):
@@ -40,6 +50,13 @@ class Grade(models.Model):
 class Teacher(models.Model):
     first = models.CharField(max_length=50, blank=False)
     last = models.CharField(max_length=50, blank=False)
+    institution = models.ForeignKey(
+        Institution,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="teachers"
+    )
 
     def __str__(self):
         return f"{self.last} {self.first}"

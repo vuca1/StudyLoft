@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
-from .models import User, Subject, Grade, Teacher, Thesis, Project, Task, Note
+from .models import User, Subject, Grade, Teacher, Thesis, Project, Task, Note, Institution
 
 
 class NewNoteForm(forms.Form):
@@ -235,7 +235,9 @@ def add_project(request):
 
     else:
         new_project_form = NewProjectForm()
-        new_project_form.fields["members"].queryset = User.objects.exclude(id=request.user.id)
+        new_project_form.fields["members"].queryset = User.objects.filter(
+            institution=request.user.institution
+        ).exclude(id=request.user.id)
         return render(request, "academics/add_project.html", {
             "new_project_form": new_project_form
         })
@@ -306,7 +308,7 @@ def add_thesis(request):
             "new_thesis_form": NewThesisForm()
         })
 
-# TODO: if user not permited to acces what then? (in thesis, task and project)
+
 @login_required
 def project(request, project_id):
     project = get_object_or_404(
@@ -338,7 +340,7 @@ def task(request, task_id):
         "notes": task.task_notes.all().order_by("-timestamp")
     })
 
-# TODO: add note styling in /thesis/id and project and task
+
 @login_required
 def thesis(request, thesis_id):
     thesis = get_object_or_404(
@@ -403,30 +405,49 @@ def register_view(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
+        institution_id = request.POST["institution"]
 
         # password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
             return render(request, "academics/register.html", {
-                "message": "Passwords must match."
+                "message": "Passwords must match.",
+                "institutions": Institution.objects.all().order_by("title")
             })
+
+        if institution_id:
+            # check if institution exists
+            institution = Institution.objects.filter(id=institution_id ).first()
+            if institution is None:
+                return render(request, "academics/register.html", {
+                    "message": "Invalid institution.",
+                    "institutions": Institution.objects.all().order_by("title")
+                })
+        else:
+            institution = None
 
         # try to create new user
         try:
-            user = User.objects.create_user(username, email, password)
+            user = User.objects.create_user(
+                username,
+                email,
+                password,
+                institution=institution)
             user.save()
         except IntegrityError:
             return render(request, "academics/register.html",{
-                "message": "Username or email already taken."
+                "message": "Username or email already taken.",
+                "institutions": Institution.objects.all().order_by("title")
             })
 
         login(request, user)
-        return render(request, "academics/index.html", {
-            "message": "Successfully registered."
-        })
+        messages.success(request, "Successfully registered.")
+        return redirect("index")
     else:
-        return render(request, "academics/register.html")
+        return render(request, "academics/register.html", {
+            "institutions": Institution.objects.all().order_by("title")
+        })
 
 
 def login_view(request):
