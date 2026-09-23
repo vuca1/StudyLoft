@@ -1,7 +1,38 @@
 {% extends "academics/layout.html" %}
 
+{% load static %}
+
 {% block title %} - My Subjects{% endblock %}
 
 {% block body %}
-    Hello my subjects
+
+    <div class="container">
+        <div class="display-6 m-2">Add new subject</div>
+        <div class="m-1">
+            <form action="{% url 'add_subject' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ new_subject_form }}
+                </div>
+                <button
+                        type="submit"
+                        class="btn btn-outline-success m-2 add-subject">
+                    Create
+                </button>
+            </form>
+        </div>
+
+        <hr>
+
+        <div id="subjects">
+            {% for subject in subjects %}
+                {% include "academics/includes/subject.html" with subject=subject %}
+            {% empty %}
+                <small id="no-subjects-message">No subjects :c</small>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="{% static 'academics/script.js' %}"></script>
+
 {% endblock %}

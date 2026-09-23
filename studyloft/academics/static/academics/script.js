@@ -1,12 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', event => {
 
-        console.log("entered click event")
-
         // get clicked element
         const element = event.target;   
 
-        // if element is 'add-note' button
+        // add note
         if (element.classList.contains('add-note')) {
 
             // prevent deafult click handler
@@ -15,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // find each related HTML element
             const url = `/add_note/${element.dataset.jobId}`;
             const form = element.form;
-            const formData = new FormData(form)
+            const formData = new FormData(form);
             
             fetch(url, {
                 method: 'POST',
@@ -35,6 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     element.form.querySelector('[name="content"]').value = result.content;
                 }
             });
+    
+            
+        // remove note
         } else if (element.classList.contains('remove-note')) {
 
             // prevent from default rerouting
@@ -56,7 +57,55 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.querySelector(`#note-${note_id}`).remove();
                 }
             });
-        }
 
+
+        } else if (element.classList.contains('add-subject')) {
+            // prevent deafult click handler
+            event.preventDefault();
+
+            const url = 'add_subject';
+            const form = element.form;
+            const formData = new FormData(form);
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                // check if result is valid on server side
+                if (result.success) {
+                    // insert new subject
+                    document.querySelector("#subjects").insertAdjacentHTML(
+                        "beforebegin",
+                        result.subject_html
+                    );
+                    // clear form
+                    form.reset();
+                    // remove "no subjects" message
+                    document.querySelector("#no-subjects-message").remove();
+                }
+            });
+        } else if (element.classList.contains("remove-subject")) {
+
+            // prevent default rerouting
+            event.preventDefault();
+
+            const subject_id = element.dataset.subjectId;
+            const url = `remove_subject/${subject_id}`
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name="csrfmiddlewaretoken"]').value
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    document.querySelector(`#subject-${subject_id}`).remove();
+                }
+            });
+        }
     });
 });

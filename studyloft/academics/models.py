@@ -18,6 +18,21 @@ class User(AbstractUser):
     )
 
 
+class Teacher(models.Model):
+    first = models.CharField(max_length=50, blank=False)
+    last = models.CharField(max_length=50, blank=False)
+    institution = models.ForeignKey(
+        Institution,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="teachers"
+    )
+
+    def __str__(self):
+        return f"{self.last} {self.first}"
+
+
 class Subject(models.Model):
     GRADE_CHOICES = [
         ("", "-Select Your Grade-"),
@@ -36,32 +51,21 @@ class Subject(models.Model):
     student = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="subjects"
+        related_name="subjects",
+        blank=False
     )
     grade = models.CharField(
         max_length=20,
-        choices=GRADE_CHOICES
+        choices=GRADE_CHOICES,
+        blank=False
     )
-    teachers = models.ManyToManyField(
-        "Teacher",
+    teacher = models.ForeignKey(
+        Teacher,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=False,
         related_name="teaching_subjects"
     )
-
-
-class Teacher(models.Model):
-    first = models.CharField(max_length=50, blank=False)
-    last = models.CharField(max_length=50, blank=False)
-    institution = models.ForeignKey(
-        Institution,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="teachers"
-    )
-
-    def __str__(self):
-        return f"{self.last} {self.first}"
 
 
 class Thesis(models.Model):
@@ -69,7 +73,8 @@ class Thesis(models.Model):
         ("", "-Select Degree-"),
         ("bachelor", "Bachelor's"),
         ("master", "Master's"),
-        ("doctoral", "Doctoral")
+        ("doctoral", "Doctoral"),
+        ("other", "Other")
     ]
 
     title = models.CharField(max_length=150, blank=False)

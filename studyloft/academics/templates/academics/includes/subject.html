@@ -1,0 +1,14 @@
+<div class="card m-3" id="subject-{{ subject.id }}">
+    <div class="card-body">
+        <p class="display-6">{{ subject.title }}</p>
+        <p>{{ subject.description }}</p>
+        <small>{{ subject.teacher }}</small><br>
+        <small>Credits: {{ subject.credits }}</small>
+        <small>Grade: {{ subject.grade }}</small><br>
+        <button
+                class="btn btn-outline-danger mt-2 remove-subject"
+                data-subject-id="{{ subject.id }}">
+            Remove
+        </button>
+    </div>
+</div>

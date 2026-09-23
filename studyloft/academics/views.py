@@ -121,7 +121,6 @@ class NewSubjectForm(forms.Form):
         required=True
     )
 
-# TODO: add page where user can add and remove subjects
 # TODO: when choosing teacher object (SubjectForm and ThesisForm),
 #       only show teachers within institution
 
@@ -341,6 +340,45 @@ def add_thesis(request):
 
 
 @login_required
+def add_subject(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        description = request.POST["description"]
+        credits = request.POST["credits"]
+        grade = request.POST["grade"]
+        teacher_id = request.POST["teacher"]
+
+        # if required fields empty return unsuccessful
+        if title == "" or credits == "" or grade == "" or teacher_id == "":
+            return JsonResponse({
+                "success": False
+            })
+
+        # create new subject object
+        new_subject = Subject(
+            title=title,
+            description=description,
+            credits=credits,
+            grade=grade,
+            teacher=get_object_or_404(Teacher, id=teacher_id),
+            student=request.user
+        )
+        new_subject.save()
+
+        # create subject html element
+        subject_html = render_to_string(
+            "academics/includes/subject.html",
+            {"subject": new_subject},
+            request=request
+        )
+
+        return JsonResponse({
+            "success": True,
+            "subject_html": subject_html
+        })
+
+
+@login_required
 def subjects(request):
     if request.method == "POST":
         pass
@@ -351,7 +389,7 @@ def subjects(request):
             institution=request.user.institution
         )
         return render(request, "academics/subjects.html", {
-            "subjects": request.user.subjects.all(),
+            "subjects": request.user.subjects.all().order_by("-id"),
             "new_subject_form": new_subject_form
         })
 
@@ -447,6 +485,23 @@ def remove_thesis(request, thesis_id):
     messages.success(request, f"Thesis \"{thesis_title}\" has been removed.")
     return redirect("theses_list")
 
+
+@login_required
+def remove_subject(request, subject_id):
+    if request.method == "POST":
+        subject = get_object_or_404(
+            Subject,
+            id=subject_id
+        )
+
+        subject.delete()
+        return JsonResponse({
+            "success": True
+        })
+
+    return JsonResponse({
+        "success": False
+    })
 
 def register_view(request):
     if request.method == "POST":

@@ -21,5 +21,7 @@ urlpatterns = [
     path("add_thesis", views.add_thesis, name="add_thesis"),
     path("thesis/<int:thesis_id>", views.thesis, name="thesis"),
     path("remove_thesis/<int:thesis_id>", views.remove_thesis, name="remove_thesis"),
-    path("subjects", views.subjects, name="subjects")
+    path("subjects", views.subjects, name="subjects"),
+    path("add_subject", views.add_subject, name="add_subject"),
+    path("remove_subject/<int:subject_id>", views.remove_subject, name="remove_subject")
 ]
