@@ -121,8 +121,6 @@ class NewSubjectForm(forms.Form):
         required=True
     )
 
-# TODO: when choosing teacher object (SubjectForm and ThesisForm),
-#       only show teachers within institution
 
 @login_required
 def add_note(request, job_id):
@@ -334,8 +332,12 @@ def add_thesis(request):
         return redirect("theses_list")
 
     else:
+        new_thesis_form = NewThesisForm()
+        new_thesis_form.fields["supervisor"].queryset = Teacher.objects.filter(
+            institution=request.user.institution
+        )
         return render(request, "academics/add_thesis.html", {
-            "new_thesis_form": NewThesisForm()
+            "new_thesis_form": new_thesis_form
         })
 
 
@@ -502,6 +504,7 @@ def remove_subject(request, subject_id):
     return JsonResponse({
         "success": False
     })
+
 
 def register_view(request):
     if request.method == "POST":
