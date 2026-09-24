@@ -299,8 +299,12 @@ def add_task(request):
         return redirect("tasks_list")
 
     else:
+        new_task_form = NewTaskForm()
+        new_task_form.fields["assignee"].queryset = User.objects.filter(
+            institution=request.user.institution
+        )
         return render(request, "academics/add_task.html", {
-            "new_task_form": NewTaskForm()
+            "new_task_form": new_task_form
         })
 
 
