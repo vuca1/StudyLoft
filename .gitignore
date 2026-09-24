@@ -1,37 +1,20 @@
-studyloft/db.sqlite3
-studyloft/academics/__pycache__/__init__.cpython-313.pyc
-studyloft/academics/__pycache__/admin.cpython-313.pyc
-studyloft/academics/__pycache__/apps.cpython-313.pyc
-studyloft/academics/__pycache__/models.cpython-313.pyc
-studyloft/academics/__pycache__/urls.cpython-313.pyc
-studyloft/academics/__pycache__/views.cpython-313.pyc
-studyloft/academics/migrations/0001_initial.py
-studyloft/academics/migrations/__pycache__/__init__.cpython-313.pyc
-studyloft/academics/migrations/__pycache__/0001_initial.cpython-313.pyc
-studyloft/studyloft/__pycache__/settings.cpython-313.pyc
-studyloft/studyloft/__pycache__/urls.cpython-313.pyc
-studyloft/studyloft/__pycache__/wsgi.cpython-313.pyc
-studyloft/academics/migrations/0002_subject_teacher_project_grade_task_subject_teachers_and_more.py
-studyloft/academics/migrations/__pycache__/0002_subject_teacher_project_grade_task_subject_teachers_and_more.cpython-313.pyc
-studyloft/academics/migrations/0003_project_timestamp.py
-studyloft/academics/migrations/0004_task_timestamp.py
-studyloft/academics/migrations/0005_project_author.py
-studyloft/academics/migrations/__pycache__/0003_project_timestamp.cpython-313.pyc
-studyloft/academics/migrations/__pycache__/0004_task_timestamp.cpython-313.pyc
-studyloft/academics/migrations/__pycache__/0005_project_author.cpython-313.pyc
-studyloft/academics/migrations/0006_task_author_task_project.py
-studyloft/academics/migrations/__pycache__/0006_task_author_task_project.cpython-313.pyc
-studyloft/academics/migrations/0007_thesis_timestamp_alter_thesis_student_and_more.py
-studyloft/academics/migrations/0008_thesis_degree.py
-studyloft/academics/migrations/__pycache__/0007_thesis_timestamp_alter_thesis_student_and_more.cpython-313.pyc
-studyloft/academics/migrations/__pycache__/0008_thesis_degree.cpython-313.pyc
-studyloft/academics/migrations/0009_alter_thesis_degree_alter_thesis_student_institution.py
-studyloft/academics/migrations/0010_remove_institution_students_user_institution.py
-studyloft/academics/migrations/0011_teacher_institution.py
-studyloft/academics/migrations/__pycache__/0009_alter_thesis_degree_alter_thesis_student_institution.cpython-313.pyc
-studyloft/academics/migrations/__pycache__/0010_remove_institution_students_user_institution.cpython-313.pyc
-studyloft/academics/migrations/__pycache__/0011_teacher_institution.cpython-313.pyc
-studyloft/academics/migrations/0012_subject_grade_subject_student_delete_grade.py
-studyloft/academics/migrations/__pycache__/0012_subject_grade_subject_student_delete_grade.cpython-313.pyc
-studyloft/academics/migrations/0013_remove_subject_teachers_subject_teacher_and_more.py
-studyloft/academics/migrations/__pycache__/0013_remove_subject_teachers_subject_teacher_and_more.cpython-313.pyc
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+db.sqlite3
+*.sqlite3
+
+# Environment variables
+.env
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE / editor
+.vscode/
+.idea/
