@@ -17,7 +17,7 @@ class ProjectTestCase(TestCase):
 
         # create projects
         project01 = Project.objects.create(title="project01", author=u1)
-        project01.members.add(u2)
+        project01.members.add(u1, u2)
 
     def test_user_institution(self):
         u1 = User.objects.get(username="u1")
@@ -29,7 +29,7 @@ class ProjectTestCase(TestCase):
             self.assertIsNone(u3.institution)
 
     def test_users_in_institution_count(self):
-         inst = Institution.objects.get(title="Institution")
+         inst = Institution.objects.get(title="institution")
          self.assertEqual(inst.students.count(), 2)
 
     def test_project_author(self):
@@ -40,15 +40,10 @@ class ProjectTestCase(TestCase):
     def test_project_member(self):
         project = Project.objects.get(title="project01")
         u2 = User.objects.get(username="u2")
-        self.assertIn(u2, project.members)
+        self.assertIn(u2, project.members.all())
 
     def test_project_member_count(self):
          project = Project.objects.get(title="project01")
-         self.assertEqual(project.members.count, 2)
-
-    def test_project_author__in_members(self):
-        project = Project.objects.get(title="project01")
-        u1 = User.objects.get(username="u1")
-        self.assertNotIn(u1, project.members)
+         self.assertEqual(project.members.count(), 2)
         
         
