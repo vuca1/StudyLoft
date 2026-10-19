@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 
 from .models import User, Subject, Project, Task, Thesis, Note, Teacher, Institution
 
@@ -45,5 +45,12 @@ class ProjectTestCase(TestCase):
     def test_project_member_count(self):
          project = Project.objects.get(title="project01")
          self.assertEqual(project.members.count(), 2)
+
+    def test_register_institutions(self):
+        institution = Institution.objects.get(title="institution")
+        c = Client()
+        response = c.get("/register_view")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(institution, response.context["institutions"])
         
         
