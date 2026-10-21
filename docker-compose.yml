@@ -1,0 +1,14 @@
+services: 
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: studyloft
+      POSTGRES_USER: studyloft
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  web:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
